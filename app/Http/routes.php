@@ -18,6 +18,8 @@ Route::get('home', 'HomeController@index');
 Route::get('home/new', 'HomeController@newAd');
 Route::post('home/new', 'HomeController@newAdPost');
 Route::get('home/ads', 'HomeController@ads');
+Route::get('home/ads/edit/{id}', 'HomeController@adsEdit');
+Route::get('home/ads/delete/{id}', 'HomeController@adsDelete');
 
 Route::get('admin', 'AdminController@index');
 Route::get('admin/tags', 'AdminController@tags');

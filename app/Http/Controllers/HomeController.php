@@ -6,6 +6,7 @@ use Auth;
 use Request;
 use Validator;
 use Illuminate\Support\Facades\Redirect;
+use \App\Adverts;
 
 class HomeController extends Controller {
 
@@ -94,7 +95,7 @@ class HomeController extends Controller {
             if (!isset($request['hash']))
                 $request['hash'] = 'undefined';
             
-            $advert = \App\Adverts::create(array(
+            $advert = Adverts::create(array(
                 'title'         => $request['name'],
                 'description'   => $request['desc'],
                 'added'         => $dateToday,
@@ -108,6 +109,21 @@ class HomeController extends Controller {
             $advert->save();
             
             return redirect()->back()->withErrors(['Advertisement successfully added']);
+	}
+        
+        /**
+	 * List of advertisements
+	 *
+	 * @return Response
+	 */
+	public function ads()
+	{
+            // we need to get list of Tags so
+            $ads = Adverts::all()->where('user_id', Auth::user()->id);
+            
+            return view('listads', array(
+                'ads' => $ads
+            ));
 	}
 
 }

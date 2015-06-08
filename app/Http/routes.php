@@ -17,6 +17,7 @@ Route::post('/', 'WelcomeController@index');
 Route::get('home', 'HomeController@index');
 Route::get('home/new', 'HomeController@newAd');
 Route::post('home/new', 'HomeController@newAdPost');
+Route::get('home/ads', 'HomeController@ads');
 
 Route::get('admin', 'AdminController@index');
 Route::get('admin/tags', 'AdminController@tags');

@@ -125,5 +125,21 @@ class HomeController extends Controller {
                 'ads' => $ads
             ));
 	}
+        
+        /**
+	 * Delete requested Ad
+	 *
+	 * @return Response
+	 */
+	public function adsDelete()
+	{
+            echo $id;
+            // we need to get list of Tags so
+            $ads = Adverts::all()->where('user_id', Auth::user()->id);
+            
+            return view('listads', array(
+                'ads' => $ads
+            ));
+	}
 
 }

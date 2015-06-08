@@ -30,8 +30,8 @@
                                                 <td>{{ $ad->title }}</td>
                                                 <td>{{ $ad->added }}</td>
                                                 <td>{{ $ad->expires }}</td>
-                                                <td><a href="{{ url('home/ads/edit/', $ad->id) }}">Edit</a></td>
-                                                <td><a href="{{ url('home/ads/delete/', $ad->id) }}">Delete</a></td>
+                                                <td><a href="{{ url('home/ads/edit', $ad->id) }}">Edit</a></td>
+                                                <td><a href="{{ url('home/ads/delete', $ad->id) }}">Delete</a></td>
                                             </tr>
                                         @endforeach
                                     </table>

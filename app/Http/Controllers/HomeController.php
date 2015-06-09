@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Request;
 use Validator;
+use Input;
 use Illuminate\Support\Facades\Redirect;
 use \App\Adverts;
 
@@ -131,15 +132,110 @@ class HomeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function adsDelete()
+	public function adsDelete($var)
 	{
-            echo $id;
+            $advert = Adverts::find($var);
+            
+            if (empty($var) || !is_numeric($var) || $advert == null)
+            {
+                $message[] = 'Incorrect Advertisement Id';
+                return Redirect::route('home/ads')
+                        ->withErrors($message);
+            }
+            
+            // does it belong to user that requested removal?
+            if ($advert->user_id != Auth::user()->id)
+            {
+                $message[] = 'Ahh you naughty boy!. Behave properly ;-)';
+                return Redirect::route('home/ads')
+                        ->withErrors($message);
+            }
+            
+            $advert->delete();
             // we need to get list of Tags so
             $ads = Adverts::all()->where('user_id', Auth::user()->id);
-            
+
             return view('listads', array(
                 'ads' => $ads
             ));
+	}
+        
+        /**
+	 * Edit requested Ad
+	 *
+	 * @return Response
+	 */
+	public function adsEdit($var)
+	{
+            $advert = Adverts::find($var);
+            
+            if (empty($var) || !is_numeric($var) || $advert == null)
+            {
+                $message[] = 'Incorrect Advertisement Id';
+                return Redirect::route('home/ads')
+                        ->withErrors($message);
+            }
+            
+            // does it belong to user that requested removal?
+            if ($advert->user_id != Auth::user()->id)
+            {
+                $message[] = 'Ahh you naughty boy!. Behave properly ;-)';
+                return Redirect::route('home/ads')
+                        ->withErrors($message);
+            }
+            
+            // we need to get list of Tags so
+            $tags = \App\Tags::all();
+            
+            $enabledTags = array();
+            foreach ($tags as $tag)
+            {
+                $enabledTags[$tag->name] = $tag->enabled;
+            }
+            
+            return view('editad', array(
+                'tags' => $enabledTags,
+                'ad' => $advert
+            ));
+	}
+        
+        /**
+	 * Process request of editing existing advertisement
+	 *
+	 * @return Response
+	 */
+	public function adsEditPost(Request $request)
+	{
+            $validator = Validator::make($request::all(),[
+                'name' => 'required',
+                'desc' => 'required'
+            ]);
+            
+            if ($validator->fails())
+            {
+                return redirect()->back()->withErrors($validator->errors());
+            }
+            
+            // validator passed, let's add that ad and display success message
+            $request = $request::all();
+            $advert = Adverts::find($request['adId']);
+            
+            if ($advert == null || $advert->user_id != Auth::user()->id)
+            {
+                $message[] = 'Ahh you naughty boy!. Behave properly ;-)';
+                return Redirect::route('home/ads')
+                        ->withErrors($message);
+            }
+            
+            $advert->title = $request['name'];
+            $advert->description = $request['desc'];
+            $advert->color = $request['city'];
+            $advert->city = $request['color'];
+            $advert->hashtag = $request['hash'];
+            
+            $advert->save();
+            
+            return redirect()->back()->withErrors(['Advertisement successfully modified']);
 	}
 
 }

@@ -17,8 +17,10 @@ Route::post('/', 'WelcomeController@index');
 Route::get('home', 'HomeController@index');
 Route::get('home/new', 'HomeController@newAd');
 Route::post('home/new', 'HomeController@newAdPost');
-Route::get('home/ads', 'HomeController@ads');
+
+Route::any('home/ads', array('as' => 'home/ads', 'uses' => 'HomeController@ads'));
 Route::get('home/ads/edit/{id}', 'HomeController@adsEdit');
+Route::post('home/ads/edit/{id}', 'HomeController@adsEditPost');
 Route::get('home/ads/delete/{id}', 'HomeController@adsDelete');
 
 Route::get('admin', 'AdminController@index');

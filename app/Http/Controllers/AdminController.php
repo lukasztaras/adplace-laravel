@@ -37,20 +37,21 @@ class AdminController extends Controller {
 	}
         
         /**
-	 * Show the application dashboard to the user.
+	 * Show all available tags
 	 *
 	 * @return Response
 	 */
 	public function tags()
 	{
-            $tags = \App\Tags::all();
-            return view('admin/admintags', array(
+            $tags = Tags::all();
+            
+            return view('admin/tags', array(
                 'tags' => $tags
             ));
 	}
         
         /**
-	 * Show the application dashboard to the user.
+	 * Process Request of editing tags
 	 *
 	 * @return Response
 	 */
@@ -69,20 +70,21 @@ class AdminController extends Controller {
 	}
         
         /**
-	 * Show the application dashboard to the user.
+	 * Show all available users
 	 *
 	 * @return Response
 	 */
 	public function users()
 	{
-            $users = \App\User::all();
-            return view('admin/adminusers', array(
+            $users = User::all();
+            
+            return view('admin/users', array(
                 'users' => $users
             ));
 	}
         
         /**
-	 * Show the application dashboard to the user.
+	 * Process request of editing users
 	 *
 	 * @return Response
 	 */
@@ -130,11 +132,12 @@ class AdminController extends Controller {
             }
             
             $advert->delete();
+            
             return redirect()->back()->withErrors(array('Advertisement successfully deleted'));
 	}
         
         /**
-	 * Delete advertisement
+	 * Edit existing advertisement
 	 *
 	 * @return Response
 	 */
@@ -146,13 +149,13 @@ class AdminController extends Controller {
                 return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
             }
             
-            return view('admin/advertsedit', array(
+            return view('admin/adverts/edit', array(
                 'ad' => $advert
             ));
 	}
         
         /**
-	 * Edit advertisement
+	 * Process request of editing advertisement
 	 *
 	 * @return Response
 	 */

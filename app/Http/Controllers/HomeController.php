@@ -7,7 +7,8 @@ use Request;
 use Validator;
 use Input;
 use Illuminate\Support\Facades\Redirect;
-use \App\Adverts;
+use App\Adverts;
+use App\Tags;
 
 class HomeController extends Controller {
 
@@ -39,7 +40,7 @@ class HomeController extends Controller {
 	 */
 	public function index()
 	{
-            return view('home');
+            return view('home/home');
 	}
         
         /**
@@ -50,7 +51,7 @@ class HomeController extends Controller {
 	public function newAd()
 	{
             // we need to get list of Tags so
-            $tags = \App\Tags::all();
+            $tags = Tags::all();
             
             $enabledTags = array();
             foreach ($tags as $tag)
@@ -58,7 +59,7 @@ class HomeController extends Controller {
                 $enabledTags[$tag->name] = $tag->enabled;
             }
             
-            return view('newad', array(
+            return view('home/add', array(
                 'tags' => $enabledTags
             ));
 	}
@@ -122,7 +123,7 @@ class HomeController extends Controller {
             // we need to get list of Tags so
             $ads = Adverts::all()->where('user_id', Auth::user()->id);
             
-            return view('listads', array(
+            return view('home/list', array(
                 'ads' => $ads
             ));
 	}
@@ -151,7 +152,7 @@ class HomeController extends Controller {
             // we need to get list of Tags so
             $ads = Adverts::all()->where('user_id', Auth::user()->id);
 
-            return view('listads', array(
+            return view('home/list', array(
                 'ads' => $ads
             ));
 	}
@@ -177,7 +178,7 @@ class HomeController extends Controller {
             }
             
             // we need to get list of Tags so
-            $tags = \App\Tags::all();
+            $tags = Tags::all();
             
             $enabledTags = array();
             foreach ($tags as $tag)
@@ -185,7 +186,7 @@ class HomeController extends Controller {
                 $enabledTags[$tag->name] = $tag->enabled;
             }
             
-            return view('editad', array(
+            return view('home/edit', array(
                 'tags' => $enabledTags,
                 'ad' => $advert
             ));

@@ -6263,3 +6263,12 @@ label,
     text-align: center;
     margin-bottom: 3px;
 }
+
+.left-align tr th {
+    text-align: left !important;
+}
+
+.left-align tr td {
+    padding: 5px;
+    border-bottom: 1px solid #f9f9f9;
+}

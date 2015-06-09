@@ -47,3 +47,9 @@
 	</div>
 </div>
 @endsection
+
+@section('adminmenu')
+    <li><a href="{{ url('/admin/tags') }}">Tags</a></li>
+    <li><a href="{{ url('/admin/users') }}">Users</a></li>
+    <li><a href="{{ url('/admin/adverts') }}">Advertisements</a></li>
+@endsection

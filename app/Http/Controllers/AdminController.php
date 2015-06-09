@@ -156,15 +156,16 @@ class AdminController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function advertsEditPost(Request $request)
+	public function advertsEditPost(MyRequest $request)
 	{
-            $advert = Adverts::find($var);
+            $request = $request::all();
+            $advert = Adverts::find($request['adId']);
+            
             if ($advert == null)
             {
                 return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
             }
             
-            $request = $request::all();
             $advert->title = $request['name'];
             $advert->description = $request['desc'];
             $advert->color = $request['city'];

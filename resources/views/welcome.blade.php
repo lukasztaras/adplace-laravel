@@ -17,6 +17,26 @@
 					</div>
                                     </form>
 				</div>
+                                @if (!empty($adverts))
+                                    <div class="panel-body">
+                                        <table class="tags-table left-align" style="width: 100%">
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Description</th>
+                                                <th>Tags</th>
+                                                <th style="text-align: center">Open</th>
+                                            </tr>
+                                            @foreach($adverts as $ad)
+                                                <tr>
+                                                    <td>{{ $ad->title }}</td>
+                                                    <td>{{ substr($ad->description, 0, 100) }}</td>
+                                                    <td>{{ $ad->hashtag }}</td>
+                                                    <td style="text-align: center"><a href="{{ url('item/'.$ad->id.'_'.str_replace(' ', '_', $ad->title )) }}">View</a></td>
+                                                </tr>
+                                            @endforeach
+                                        </table>
+                                    </div>
+                                @endif
 			</div>
 		</div>
 	</div>

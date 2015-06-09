@@ -171,8 +171,8 @@ class AdminController extends Controller {
             
             $advert->title = $request['name'];
             $advert->description = $request['desc'];
-            $advert->color = $request['city'];
-            $advert->city = $request['color'];
+            $advert->color = $request['color'];
+            $advert->city = $request['city'];
             $advert->hashtag = $request['hash'];
             $advert->save();
             

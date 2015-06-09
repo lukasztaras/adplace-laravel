@@ -7,6 +7,7 @@ use Request as MyRequest;
 use Illuminate\Support\Facades\Redirect;
 use App\Tags;
 use App\User;
+use App\Adverts;
 
 class AdminController extends Controller {
 
@@ -98,6 +99,80 @@ class AdminController extends Controller {
             }
             
             return Redirect::to('admin/users')->send();
+	}
+        
+        /**
+	 * List of all advertisements
+	 *
+	 * @return Response
+	 */
+	public function adverts()
+	{
+            $today = new \DateTime();
+            $adverts = Adverts::where('expires', '>', $today)->paginate(15);
+            
+            return view('admin/adverts', array(
+                'ads' => $adverts
+            ));
+	}
+        
+        /**
+	 * Delete advertisement
+	 *
+	 * @return Response
+	 */
+	public function advertsDelete($var)
+	{
+            $advert = Adverts::find($var);
+            if ($advert == null)
+            {
+                return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
+            }
+            
+            $advert->delete();
+            return redirect()->back()->withErrors(array('Advertisement successfully deleted'));
+	}
+        
+        /**
+	 * Delete advertisement
+	 *
+	 * @return Response
+	 */
+	public function advertsEdit($var)
+	{
+            $advert = Adverts::find($var);
+            if ($advert == null)
+            {
+                return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
+            }
+            
+            return view('admin/advertsedit', array(
+                'ad' => $advert
+            ));
+	}
+        
+        /**
+	 * Edit advertisement
+	 *
+	 * @return Response
+	 */
+	public function advertsEditPost(Request $request)
+	{
+            $advert = Adverts::find($var);
+            if ($advert == null)
+            {
+                return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
+            }
+            
+            $request = $request::all();
+            $advert->title = $request['name'];
+            $advert->description = $request['desc'];
+            $advert->color = $request['city'];
+            $advert->city = $request['color'];
+            $advert->hashtag = $request['hash'];
+            $advert->save();
+            
+            return redirect()->back()->withErrors(array('Advertisement successfully modified'));
 	}
 
 }

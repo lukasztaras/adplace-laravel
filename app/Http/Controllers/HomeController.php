@@ -109,7 +109,7 @@ class HomeController extends Controller {
             
             $advert->save();
             
-            return redirect()->back()->withErrors(['Advertisement successfully added']);
+            return redirect()->back()->withErrors(array('Advertisement successfully added'));
 	}
         
         /**
@@ -138,17 +138,13 @@ class HomeController extends Controller {
             
             if (empty($var) || !is_numeric($var) || $advert == null)
             {
-                $message[] = 'Incorrect Advertisement Id';
-                return Redirect::route('home/ads')
-                        ->withErrors($message);
+                return Redirect::route('home/ads')->withErrors(array('Incorrect Advertisement Id'));
             }
             
             // does it belong to user that requested removal?
             if ($advert->user_id != Auth::user()->id)
             {
-                $message[] = 'Ahh you naughty boy!. Behave properly ;-)';
-                return Redirect::route('home/ads')
-                        ->withErrors($message);
+                return Redirect::route('home/ads')->withErrors(array('Ahh you naughty boy!. Behave properly ;-)'));
             }
             
             $advert->delete();
@@ -171,17 +167,13 @@ class HomeController extends Controller {
             
             if (empty($var) || !is_numeric($var) || $advert == null)
             {
-                $message[] = 'Incorrect Advertisement Id';
-                return Redirect::route('home/ads')
-                        ->withErrors($message);
+                return Redirect::route('home/ads')->withErrors(array('Incorrect Advertisement Id'));
             }
             
             // does it belong to user that requested removal?
             if ($advert->user_id != Auth::user()->id)
             {
-                $message[] = 'Ahh you naughty boy!. Behave properly ;-)';
-                return Redirect::route('home/ads')
-                        ->withErrors($message);
+                return Redirect::route('home/ads')->withErrors(array('Ahh you naughty boy!. Behave properly ;-)'));
             }
             
             // we need to get list of Tags so
@@ -222,9 +214,7 @@ class HomeController extends Controller {
             
             if ($advert == null || $advert->user_id != Auth::user()->id)
             {
-                $message[] = 'Ahh you naughty boy!. Behave properly ;-)';
-                return Redirect::route('home/ads')
-                        ->withErrors($message);
+                return Redirect::route('home/ads')->withErrors(array('Ahh you naughty boy!. Behave properly ;-)'));
             }
             
             $advert->title = $request['name'];
@@ -235,7 +225,7 @@ class HomeController extends Controller {
             
             $advert->save();
             
-            return redirect()->back()->withErrors(['Advertisement successfully modified']);
+            return redirect()->back()->withErrors(array('Advertisement successfully modified'));
 	}
 
 }

@@ -28,6 +28,10 @@ Route::get('admin/tags', 'AdminController@tags');
 Route::post('admin/tags', 'AdminController@tagsPost');
 Route::get('admin/users', 'AdminController@users');
 Route::post('admin/users', 'AdminController@usersPost');
+Route::get('admin/adverts', 'AdminController@adverts');
+Route::get('admin/adverts/edit/{id}', 'AdminController@advertsEdit');
+Route::post('admin/adverts/edit/{id}', 'AdminController@advertsEditPost');
+Route::get('admin/adverts/delete/{id}', 'AdminController@advertsDelete');
 
 Route::controllers([
 	'auth' => 'Auth\AuthController',

@@ -1,6 +1,8 @@
 <?php namespace App\Services;
 
 use App\User;
+use App\Roles;
+use App\Userroles;
 use Validator;
 use Illuminate\Contracts\Auth\Registrar as RegistrarContract;
 
@@ -29,11 +31,20 @@ class Registrar implements RegistrarContract {
 	 */
 	public function create(array $data)
 	{
-		return User::create([
-			'name' => $data['name'],
-			'email' => $data['email'],
-			'password' => bcrypt($data['password']),
-		]);
+            $newUser = User::create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => bcrypt($data['password']),
+            ]);
+            
+            // let's put that user in advertiser role
+            $role = Roles::all()->where('name', 'advertiser')->first();
+            Userroles::create(array(
+                'user_id' => $newUser->id,
+                'role_id' => $role->id
+            ))->save();
+            
+            return $newUser;
 	}
 
 }

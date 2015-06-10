@@ -94,7 +94,7 @@ class AdminController extends Controller {
             
             // let's get all tags we want to set to enabled
             $users = MyRequest::all();
-            var_dump($users);
+
             foreach($users as $key => $user) 
             {
                 User::where('id', $key)->update(array('enabled' => 1));

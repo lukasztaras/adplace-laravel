@@ -6,6 +6,7 @@ use Auth;
 use Request;
 use Validator;
 use Input;
+use App\User;
 use Illuminate\Support\Facades\Redirect;
 use App\Adverts;
 use App\Tags;
@@ -39,7 +40,7 @@ class HomeController extends Controller {
 	 * @return Response
 	 */
 	public function index()
-	{
+	{           
             return view('home/home');
 	}
         

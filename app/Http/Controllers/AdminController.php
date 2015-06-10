@@ -20,7 +20,7 @@ class AdminController extends Controller {
 	{
             $this->middleware('auth');
             
-            if (Auth::user()->inRole('administrator') === false)
+            if (Auth::check() && Auth::user()->inRole('administrator') === false)
             {
                 return Redirect::to('/')->send();
             }

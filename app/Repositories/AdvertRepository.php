@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Adverts;
+use Illuminate\Support\Facades\DB;
 
 class AdvertRepository implements RepositoryInterface {
     

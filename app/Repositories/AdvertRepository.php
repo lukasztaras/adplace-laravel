@@ -52,4 +52,20 @@ class AdvertRepository implements RepositoryInterface {
         $advert->delete();
     }
     
+    public function searchForAdvert($keyword)
+    {
+        return $adverts = DB::table('adverts')
+                    ->where('title', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('description', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('color', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('city', 'LIKE', '%'.$keyword.'%')
+                    ->orWhere('hashtag', 'LIKE', '%'.$keyword.'%')
+                    ->get();
+    }
+    
+    public function displayAdvertsWithPaginate($paginateCount)
+    {
+        return $adverts = Adverts::where('expires', '<', new \DateTime())->paginate($paginateCount);
+    }
+
 }

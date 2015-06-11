@@ -14,4 +14,14 @@ class TagRepository implements RepositoryInterface {
         return Tags::find($id);
     }
     
+    public function disableAllTags()
+    {
+        Tags::where('enabled', 1)->update(array('enabled' => 0));
+    }
+    
+    public function enableTagById($id)
+    {
+        Tags::where('id', $id)->update(array('enabled' => 1));
+    }
+    
 }

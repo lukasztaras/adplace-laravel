@@ -29,4 +29,14 @@ class UserRepository implements RepositoryInterface {
         return $this->authenticatedUser;
     }
     
+    public function disableAllUsers()
+    {
+        User::where('enabled', 1)->update(array('enabled' => 0));
+    }
+    
+    public function enableUserById($id)
+    {
+        User::where('id', $id)->update(array('enabled' => 1));
+    }
+    
 }

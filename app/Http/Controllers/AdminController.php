@@ -8,19 +8,30 @@ use Illuminate\Support\Facades\Redirect;
 use App\Tags;
 use App\User;
 use App\Adverts;
+use App\Repositories\UserRepository;
+use App\Repositories\TagRepository;
+use App\Repositories\AdvertRepository;
 
 class AdminController extends Controller {
 
+        protected $userRepository;
+        protected $tagRepository;
+        protected $advertRepository;
+        
 	/**
 	 * Create a new controller instance.
 	 *
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct(UserRepository $_userRepository, TagRepository $_tagRepository, AdvertRepository $_advertRepository)
 	{
             $this->middleware('auth');
             
-            if (Auth::check() && Auth::user()->inRole('administrator') === false)
+            $this->userRepository = $_userRepository;
+            $this->tagRepository = $_tagRepository;
+            $this->advertRepository = $_advertRepository;
+            
+            if ($this->userRepository->getAuthenticatedUser() === null && $this->userRepository->getAuthenticatedUser()->inRole('administrator') === false)
             {
                 return Redirect::to('/')->send();
             }
@@ -43,7 +54,7 @@ class AdminController extends Controller {
 	 */
 	public function tags()
 	{
-            $tags = Tags::all();
+            $tags = $this->tagRepository->getAll();
             
             return view('admin/tags', array(
                 'tags' => $tags
@@ -57,13 +68,13 @@ class AdminController extends Controller {
 	 */
 	public function tagsPost()
 	{
-            Tags::where('enabled', 1)->update(array('enabled' => 0));
+            $this->tagRepository->disableAllTags();
             
             // let's get all tags we want to set to enabled
             $tags = MyRequest::all();
-            foreach($tags as $key => $tag) 
+            foreach($tags as $id => $tag) 
             {
-                Tags::where('id', $key)->update(array('enabled' => 1));
+                $this->tagRepository->enableTagById($id);
             }
             
             return Redirect::to('admin/tags')->send();
@@ -76,7 +87,7 @@ class AdminController extends Controller {
 	 */
 	public function users()
 	{
-            $users = User::all();
+            $users = $this->userRepository->getAll();
             
             return view('admin/users', array(
                 'users' => $users
@@ -90,14 +101,14 @@ class AdminController extends Controller {
 	 */
 	public function usersPost()
 	{
-            User::where('enabled', 1)->update(array('enabled' => 0));
+            $this->userRepository->disableAllUsers();
             
             // let's get all tags we want to set to enabled
             $users = MyRequest::all();
 
-            foreach($users as $key => $user) 
+            foreach($users as $id => $user) 
             {
-                User::where('id', $key)->update(array('enabled' => 1));
+                $this->userRepository->enableUserById($id);
             }
             
             return Redirect::to('admin/users')->send();
@@ -110,8 +121,7 @@ class AdminController extends Controller {
 	 */
 	public function adverts()
 	{
-            $today = new \DateTime();
-            $adverts = Adverts::where('expires', '>', $today)->paginate(15);
+            $this->advertRepository->displayAdvertsWithPaginate(15);
             
             return view('admin/adverts', array(
                 'ads' => $adverts
@@ -123,15 +133,16 @@ class AdminController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function advertsDelete($var)
+	public function advertsDelete($id)
 	{
-            $advert = Adverts::find($var);
+            $advert = $this->advertRepository->getById($id);
+            
             if ($advert == null)
             {
                 return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
             }
             
-            $advert->delete();
+            $this->advertRepository->deleteAdvert($advert);
             
             return redirect()->back()->withErrors(array('Advertisement successfully deleted'));
 	}
@@ -143,7 +154,8 @@ class AdminController extends Controller {
 	 */
 	public function advertsEdit($var)
 	{
-            $advert = Adverts::find($var);
+            $advert = $this->advertRepository->getById($id);
+            
             if ($advert == null)
             {
                 return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
@@ -162,19 +174,14 @@ class AdminController extends Controller {
 	public function advertsEditPost(MyRequest $request)
 	{
             $request = $request::all();
-            $advert = Adverts::find($request['adId']);
+            $advert = $advert = $this->advertRepository->getById($request['adId']);
             
             if ($advert == null)
             {
                 return redirect()->back()->withErrors(array('Incorrect Advertisement Id'));
             }
             
-            $advert->title = $request['name'];
-            $advert->description = $request['desc'];
-            $advert->color = $request['color'];
-            $advert->city = $request['city'];
-            $advert->hashtag = $request['hash'];
-            $advert->save();
+            $this->advertRepository->updateAdvert($request, $advert);
             
             return redirect()->back()->withErrors(array('Advertisement successfully modified'));
 	}

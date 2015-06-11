@@ -28,7 +28,7 @@ class AdvertRepository implements RepositoryInterface {
             'description'   => $request['desc'],
             'added'         => $dateToday,
             'expires'       => $nextWeek,
-            'user_id'       => $this->userRepository->getAuthenticatedUser()->id,
+            'user_id'       => $userId,
             'city'          => $request['city'],
             'color'         => $request['color'],
             'hashtag'       => $request['hash']
@@ -63,11 +63,6 @@ class AdvertRepository implements RepositoryInterface {
                     ->orWhere('city', 'LIKE', '%'.$keyword.'%')
                     ->orWhere('hashtag', 'LIKE', '%'.$keyword.'%')
                     ->get();
-    }
-    
-    public function displayAdvertsWithPaginate($paginateCount)
-    {
-        return $adverts = Adverts::where('expires', '<', new \DateTime())->paginate($paginateCount);
     }
 
 }

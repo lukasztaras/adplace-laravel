@@ -5,9 +5,6 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Request as MyRequest;
 use Illuminate\Support\Facades\Redirect;
-use App\Tags;
-use App\User;
-use App\Adverts;
 use App\Repositories\UserRepository;
 use App\Repositories\TagRepository;
 use App\Repositories\AdvertRepository;
@@ -121,7 +118,7 @@ class AdminController extends Controller {
 	 */
 	public function adverts()
 	{
-            $this->advertRepository->displayAdvertsWithPaginate(15);
+            $adverts = $this->advertRepository->getAll();
             
             return view('admin/adverts', array(
                 'ads' => $adverts
@@ -152,7 +149,7 @@ class AdminController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function advertsEdit($var)
+	public function advertsEdit($id)
 	{
             $advert = $this->advertRepository->getById($id);
             

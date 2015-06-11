@@ -37,9 +37,6 @@
                                         <tr>
                                             <td colspan="5">&nbsp;</td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="5" style="text-align: center"><?php echo $ads->render(); ?></td>
-                                        </tr>
                                     </table>
 				</div>
 			</div>

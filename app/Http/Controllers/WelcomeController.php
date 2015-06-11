@@ -37,6 +37,9 @@ class WelcomeController extends Controller {
                 $keyword = Request::all()['name'];
                 $adverts = $this->advertRepository->searchForAdvert($keyword);
             }
+            else {
+                $adverts = $this->advertRepository->getAll()->sortBy('added');
+            }
             
             return view('welcome', array(
                 'adverts' => $adverts

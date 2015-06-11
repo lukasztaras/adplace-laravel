@@ -31,7 +31,7 @@ class AdminController extends Controller {
             $this->tagRepository = $_tagRepository;
             $this->advertRepository = $_advertRepository;
             
-            if ($this->userRepository->getAuthenticatedUser() === null && $this->userRepository->getAuthenticatedUser()->inRole('administrator') === false)
+            if ($this->userRepository->getAuthenticatedUser() === null || $this->userRepository->getAuthenticatedUser()->inRole('administrator') === false)
             {
                 return Redirect::to('/')->send();
             }

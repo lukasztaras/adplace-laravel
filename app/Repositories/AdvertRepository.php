@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class AdvertRepository implements RepositoryInterface {
     
-    public function getAll() {
+    public function getAll() 
+    {
         return Adverts::all();
     }
     
-    public function getById($id) {
+    public function getById($id) 
+    {
         return Adverts::find($id);
     }
     

@@ -10,28 +10,27 @@ use App\User;
 use Illuminate\Support\Facades\Redirect;
 use App\Adverts;
 use App\Tags;
+use App\Repositories\UserRepository;
+use App\Repositories\TagRepository;
+use App\Repositories\AdvertRepository;
 
 class HomeController extends Controller {
 
-	/*
-	|--------------------------------------------------------------------------
-	| Home Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller renders your application's "dashboard" for users that
-	| are authenticated. Of course, you are free to change or remove the
-	| controller as you wish. It is just here to get your app started!
-	|
-	*/
+	protected $userRepository;
+        protected $tagRepository;
+        protected $advertRepository;
 
 	/**
 	 * Create a new controller instance.
 	 *
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct(UserRepository $_userRepository, TagRepository $_tagRepository, AdvertRepository $_advertRepository)
 	{
-		$this->middleware('auth');
+            $this->middleware('auth');
+            $this->userRepository = $_userRepository;
+            $this->tagRepository = $_tagRepository;
+            $this->advertRepository = $_advertRepository;
 	}
 
 	/**
@@ -52,7 +51,7 @@ class HomeController extends Controller {
 	public function newAd()
 	{
             // we need to get list of Tags so
-            $tags = Tags::all();
+            $tags = $this->tagRepository->getAll();
             
             $enabledTags = array();
             foreach ($tags as $tag)
@@ -82,11 +81,6 @@ class HomeController extends Controller {
                 return redirect()->back()->withErrors($validator->errors());
             }
             
-            // validator passed, let's add that ad and display success message
-            $dateToday = new \DateTime();
-            $nextWeek = new \DateTime();
-            $nextWeek->add(new \DateInterval('P1W'));
-            
             $request = $request::all();
             
             if (!isset($request['city']))
@@ -98,18 +92,7 @@ class HomeController extends Controller {
             if (!isset($request['hash']))
                 $request['hash'] = 'undefined';
             
-            $advert = Adverts::create(array(
-                'title'         => $request['name'],
-                'description'   => $request['desc'],
-                'added'         => $dateToday,
-                'expires'       => $nextWeek,
-                'user_id'       => Auth::user()->id,
-                'city'          => $request['city'],
-                'color'         => $request['color'],
-                'hashtag'       => $request['hash']
-            ));
-            
-            $advert->save();
+            $this->advertRepository->createAdvert($request, $this->userRepository->getAuthenticatedUser()->id);
             
             return redirect()->back()->withErrors(array('Advertisement successfully added'));
 	}
@@ -122,7 +105,7 @@ class HomeController extends Controller {
 	public function ads()
 	{
             // we need to get list of Tags so
-            $ads = Adverts::all()->where('user_id', Auth::user()->id);
+            $ads = $this->advertRepository->getAll()->where('user_id', $this->userRepository->getAuthenticatedUser()->id);
             
             return view('home/list', array(
                 'ads' => $ads
@@ -134,9 +117,9 @@ class HomeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function adsDelete($var)
+	public function adsDelete($id)
 	{
-            $advert = Adverts::find($var);
+            $advert = $this->advertRepository->getById($id);
             
             if (empty($var) || !is_numeric($var) || $advert == null)
             {
@@ -144,14 +127,14 @@ class HomeController extends Controller {
             }
             
             // does it belong to user that requested removal?
-            if ($advert->user_id != Auth::user()->id)
+            if ($advert->user_id != $this->userRepository->getAuthenticatedUser()->id)
             {
                 return Redirect::route('home/ads')->withErrors(array('Ahh you naughty boy!. Behave properly ;-)'));
             }
             
-            $advert->delete();
-            // we need to get list of Tags so
-            $ads = Adverts::all()->where('user_id', Auth::user()->id);
+            $this->advertRepository->deleteAdvert($advert);
+            // we need to get list of Adverts so
+            $ads = $this->advertRepository->getAll()->where('user_id', $this->userRepository->getAuthenticatedUser()->id);
 
             return view('home/list', array(
                 'ads' => $ads
@@ -163,9 +146,9 @@ class HomeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function adsEdit($var)
+	public function adsEdit($id)
 	{
-            $advert = Adverts::find($var);
+            $advert = $advert = $this->advertRepository->getById($id);
             
             if (empty($var) || !is_numeric($var) || $advert == null)
             {
@@ -173,13 +156,13 @@ class HomeController extends Controller {
             }
             
             // does it belong to user that requested removal?
-            if ($advert->user_id != Auth::user()->id)
+            if ($advert->user_id != $this->userRepository->getAuthenticatedUser()->id)
             {
                 return Redirect::route('home/ads')->withErrors(array('Ahh you naughty boy!. Behave properly ;-)'));
             }
             
             // we need to get list of Tags so
-            $tags = Tags::all();
+            $tags = $this->tagRepository->getAll();
             
             $enabledTags = array();
             foreach ($tags as $tag)
@@ -212,20 +195,14 @@ class HomeController extends Controller {
             
             // validator passed, let's add that ad and display success message
             $request = $request::all();
-            $advert = Adverts::find($request['adId']);
+            $advert = $this->advertRepository->getById($request['adId']);
             
-            if ($advert == null || $advert->user_id != Auth::user()->id)
+            if ($advert == null || $advert->user_id != $this->userRepository->getAuthenticatedUser()->id)
             {
                 return Redirect::route('home/ads')->withErrors(array('Ahh you naughty boy!. Behave properly ;-)'));
             }
             
-            $advert->title = $request['name'];
-            $advert->description = $request['desc'];
-            $advert->color = $request['city'];
-            $advert->city = $request['color'];
-            $advert->hashtag = $request['hash'];
-            
-            $advert->save();
+            $this->advertRepository->updateAdvert($request, $advert);
             
             return redirect()->back()->withErrors(array('Advertisement successfully modified'));
 	}

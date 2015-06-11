@@ -69,6 +69,9 @@ class AdminController extends Controller {
             
             // let's get all tags we want to set to enabled
             $tags = MyRequest::all();
+            var_dump($tags);
+            exit;
+            
             foreach($tags as $id => $tag) 
             {
                 $this->tagRepository->enableTagById($id);

@@ -4,28 +4,23 @@ use Request;
 use App\Adverts;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\AdvertRepository;
+use App\Repositories\UserRepository;
 
 class WelcomeController extends Controller {
 
-	/*
-	|--------------------------------------------------------------------------
-	| Welcome Controller
-	|--------------------------------------------------------------------------
-	|
-	| This controller renders the "marketing page" for the application and
-	| is configured to only allow guests. Like most of the other sample
-	| controllers, you are free to modify or remove it as you desire.
-	|
-	*/
+	protected $advertRepository;
+        protected $userRepository;
 
 	/**
 	 * Create a new controller instance.
 	 *
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct(AdvertRepository $_advertRepository, UserRepository $_userRepository)
 	{
-
+            $this->advertRepository = $_advertRepository;
+            $this->userRepository = $_userRepository;
 	}
 
 	/**
@@ -40,14 +35,7 @@ class WelcomeController extends Controller {
             if (Request::method() == 'POST') 
             {
                 $keyword = Request::all()['name'];
-                
-                $adverts = DB::table('adverts')
-                    ->where('title', 'LIKE', '%'.$keyword.'%')
-                    ->orWhere('description', 'LIKE', '%'.$keyword.'%')
-                    ->orWhere('color', 'LIKE', '%'.$keyword.'%')
-                    ->orWhere('city', 'LIKE', '%'.$keyword.'%')
-                    ->orWhere('hashtag', 'LIKE', '%'.$keyword.'%')
-                    ->get();
+                $adverts = $this->advertRepository->searchForAdvert($keyword);
             }
             
             return view('welcome', array(
@@ -69,13 +57,13 @@ class WelcomeController extends Controller {
                 return redirect()->back();
             }
             
-            $advert = Adverts::find($var[0]);
+            $advert = $this->advertRepository->getById($var[0]);
             
             if ($advert == null) {
                 return redirect()->back();
             }
             
-            $seller = User::find($advert->user_id);
+            $seller = $this->userRepository->getById($advert->user_id);
             
             return view('item', array(
                 'advert' => $advert,

@@ -28,7 +28,8 @@ class AdminController extends Controller {
             $this->tagRepository = $_tagRepository;
             $this->advertRepository = $_advertRepository;
             
-            if ($this->userRepository->getAuthenticatedUser() === null || $this->userRepository->getAuthenticatedUser()->inRole('administrator') === false)
+            if ($this->userRepository->getAuthenticatedUser() === null || 
+                    $this->userRepository->getAuthenticatedUser()->inRole('administrator') === false)
             {
                 return Redirect::to('/')->send();
             }
@@ -69,8 +70,6 @@ class AdminController extends Controller {
             
             // let's get all tags we want to set to enabled
             $tags = MyRequest::all();
-            var_dump($tags);
-            exit;
             
             foreach($tags as $id => $tag) 
             {

@@ -33,5 +33,10 @@ return [
 		'model'  => 'App\User',
 		'secret' => '',
 	],
+    
+        'facebook' => [
+		'model'  => 'App\User',
+		'secret' => '',
+	],
 
 ];
